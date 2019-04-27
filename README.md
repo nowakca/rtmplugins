@@ -29,11 +29,12 @@ This will make your rtpmplugins directory.
 
 ### Prep the virtual environment
 ```
-cd rtpmplugins
+cd rtmplugins
 python3 -m venv env
 source env/bin/activate
 pip install --upgrade pip
 pip install -r requirements-dev.txt
+open rtmplugins.code-workspace
 ```
 
 This will create your virtual environment, and since it's in your project folder (where you're VSCode workspace is, VSCode will autodetect the workspace. Click the python version on the bottom left corner to select the 'env' virtual environment)
