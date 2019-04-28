@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!env/bin/python
 from argparse import ArgumentParser
 import sys
 import os
