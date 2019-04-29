@@ -18,14 +18,14 @@ It reads the LastPass secure note and regex extracts the token type from the tex
 
 Sample Section of hte rtmbot.conf file
 ---
-RepeatPlugin:
+DispatcherPlugin:
     web_api_path: Shared-FEBot/febot_token_web
 '''
 
 PP = pprint.PrettyPrinter(indent=4)
 
 
-class RepeatPlugin(Plugin):
+class DispatcherPlugin(Plugin):
     def __init__(self, slack_client, plugin_config):
         '''
         After we do our base initialization, work out our identity
@@ -75,24 +75,43 @@ class RepeatPlugin(Plugin):
         Note: subtype 'message_changed' happens on an edit
           This will have a message and previous_message object
         '''
-        PP.pprint(data)
-
         # Ignore our own messages
         if 'bot_id' in data:
             if self.bot_id == data['bot_id']:
                 logging.info('ignoring my own post')
                 return
+        PP.pprint(data)
 
-        output = subprocess.check_output(["./client_test.py"])
+        # Get our base command
+        pieces = data['text'].split()
+        cmd = pieces[0]
+
+        # figure out what the command maps into (for aliasing, etc)
+        # Also ensures we're whitelisting valid commands
+        command_map = {
+            'finger': 'finger.py',
+            'yfinger': 'finger.py',
+            'help': 'help_all.py',
+        }
+        actual_cmd = command_map.get(cmd, 'help_all.py')
+        executable = './bin/' + actual_cmd
+        logging.info('Mapped command "{}" to "{}" for user "{}" in channel "{}"'.format(
+            cmd, executable, data['user'], data['channel']))
+
+        # Sanity check the parameters
+        if actual_cmd == 'finger.py':
+            param1 = pieces[1]
+            params = ["-s", param1]
+        else:
+            params = []
+
+        output = subprocess.check_output([executable] + params)
         # print(output.decode("utf-8"))
 
         if data['channel'].startswith("D"):
-            self.outputs.append(
-                [data['channel'], 'from repeat1 "{}" in channel {}'.format(
-                    data['text'], data['channel']
-                )]
-            )
             self.outputs.append([data['channel'], output.decode("utf-8")])
+        else:
+            print('ignoring nonDM')
 
     def process_member_joined_channel(self, data):
         pass
