@@ -7,6 +7,7 @@ import yaml
 import subprocess
 
 from rtmbot import RtmBot
+from lpass.get_lpcred import get_lpcred
 
 '''
 This is modelled on https://github.com/slackapi/python-rtmbot/blob/master/rtmbot/bin/run_rtmbot.py
@@ -39,22 +40,7 @@ def main(args=None):
     # overlap it with our LastPass info if needed
     lk = config['LASTPASS_KEY']
     if lk:
-        try:
-            bytes_res = subprocess.check_output(
-                ["lpass", "show", "--notes", lk])
-            string_res = str(bytes_res, 'utf-8')
-
-            p = re.compile('(xoxb-[A-Za-z0-9-]+)')
-            m = p.search(string_res)
-            if m:
-                config['SLACK_TOKEN'] = m.group(1)
-            else:
-                raise Exception(
-                    'Was able to read note "{}", but could not find an xoxb- token in it.'.format(lk))
-        except subprocess.CalledProcessError:  # as e:
-            #print( repr(e) )
-            print('Unable to read the xoxb token from "{}"'.format(lk))
-            sys.exit(0)
+        config['SLACK_TOKEN'] = get_lpcred(lk, 'xoxb')
 
     # Create our bot and move on
     bot = RtmBot(config)
