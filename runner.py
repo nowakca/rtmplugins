@@ -2,9 +2,7 @@
 from argparse import ArgumentParser
 import sys
 import os
-import re
 import yaml
-import subprocess
 
 from rtmbot import RtmBot
 from lpass.get_lpcred import get_lpcred
