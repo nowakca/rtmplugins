@@ -1,10 +1,10 @@
-from rtmbot.core import Plugin
+import os
 import pprint
-import subprocess
-import asyncio
 import logging
+import subprocess
+from creds.lpass import get_lpcred
+from rtmbot.core import Plugin
 from slackclient import SlackClient
-from lpass.get_lpcred import get_lpcred
 
 '''
 Refer to https://github.com/slackapi/python-rtmbot for Plugin documentation
@@ -16,7 +16,7 @@ Starts with G -> Public or Private Channel
 This reads the LastPass Note Path from rtmbot.conf
 It reads the LastPass secure note and regex extracts the token type from the text of the note
 
-Sample Section of hte rtmbot.conf file
+Sample Section of the rtmbot.conf file
 ---
 DispatcherPlugin:
     web_api_path: Shared-FEBot/febot_token_web
@@ -105,7 +105,11 @@ class DispatcherPlugin(Plugin):
         else:
             params = []
 
-        output = subprocess.check_output([executable] + params)
+        new_env = os.environ.copy()
+        new_env['PYTHONPATH'] = '.'
+
+        output = subprocess.check_output(
+            [executable] + params, env=new_env)
         # print(output.decode("utf-8"))
 
         if data['channel'].startswith("D"):

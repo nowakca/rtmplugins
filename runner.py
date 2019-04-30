@@ -5,15 +5,12 @@ import os
 import yaml
 
 from rtmbot import RtmBot
-from lpass.get_lpcred import get_lpcred
+from creds.lpass import get_lpcred
 
 '''
 This is modelled on https://github.com/slackapi/python-rtmbot/blob/master/rtmbot/bin/run_rtmbot.py
 It just adds in some bits to pull credentials from something other than a local text file
 '''
-
-
-sys.path.append(os.getcwd())
 
 
 def parse_args():
@@ -36,7 +33,7 @@ def main(args=None):
     config = yaml.load(open(args.config or 'rtmbot.conf', 'r'))
 
     # overlap it with our LastPass info if needed
-    lk = config['LASTPASS_KEY']
+    lk = config['LASTPASS_KEY_BOT']
     if lk:
         config['SLACK_TOKEN'] = get_lpcred(lk, 'xoxb')
 

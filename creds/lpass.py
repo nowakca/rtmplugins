@@ -1,9 +1,11 @@
+import re
 import sys
 import subprocess
-import re
+
 
 def get_lpcred(lp_path, token_type='xoxb'):
     try:
+        #print('Fetching LPPath="{}"'.format(lp_path))
         bytes_res = subprocess.check_output(
             ["lpass", "show", "--notes", lp_path])
         string_res = str(bytes_res, 'utf-8')
@@ -19,3 +21,7 @@ def get_lpcred(lp_path, token_type='xoxb'):
         #print( repr(e) )
         print('Unable to read the "{}" token from "{}"'.format(token_type, lp_path))
         sys.exit(0)
+
+
+def get_creds(token_type='xoxb'):
+    pass

@@ -1,20 +1,15 @@
 #!env/bin/python
-# Add our parents path to the include path explicitly
-#   (this avoids the problems with relative paths above parent)
-import os
-import sys
-import yaml
-from pathlib import Path
+
+# Run this from the rtmplugins directory if needed
+# PYTHONPATH=. ./bin/finger.py  -s test1
+
+import json
+import requests
 from argparse import ArgumentParser
-from slackclient import SlackClient
-
-# I don't love this, but it seemst to be the only way to get the lpass
-# module without installing it globally... and it's not near ready
-# to be its own thing yet
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-from lpass.get_lpcred import get_lpcred
+from bin_utils import get_master_config, post_response
 
 
+################################################################################
 # Prepare our command line option reader
 parser = ArgumentParser()
 parser.add_argument(
@@ -23,23 +18,28 @@ parser.add_argument(
     help='shortid of user to lookup.',
     metavar='shortid'
 )
-
-
-# Fetch the action options
 args = parser.parse_args()
+
+
+#
+def fetch_info(shortid):
+    '''
+    Given a shortid, return an object representation of its response
+    '''
+    api_url = 'https://jsonplaceholder.typicode.com/todos/1'
+    headers = {}
+
+    response = requests.get(api_url, headers=headers)
+    # print(repr(response))
+
+    if response.status_code == 200:
+        dict = json.loads(response.content.decode('utf-8'))
+        # print(dict['title'])
+        return dict
+    else:
+        return None
+
+
+################################################################################
 shortid = args.shortid
-
-
-# Read our config file so we can get the past to our lastpass info
-config = yaml.load(open('rtmbot.conf', 'r'))
-lk = config['LASTPASS_KEY']
-slack_token = get_lpcred(lk, 'xoxb')
-
-
-# Use the stored slack token to make a web api connection for our responses
-sc = SlackClient(slack_token)
-sc.api_call(
-    "chat.postMessage",
-    channel="DHWMC8L3D",
-    text="Looking up {}! :tada:".format(shortid)
-)
+post_response('DHWMC8L3D', repr(fetch_info(shortid)))
