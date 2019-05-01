@@ -99,11 +99,10 @@ class DispatcherPlugin(Plugin):
             cmd, executable, data['user'], data['channel']))
 
         # Sanity check the parameters
+        params = ["-c", data['channel']]
+
         if actual_cmd == 'finger.py':
-            param1 = pieces[1]
-            params = ["-s", param1]
-        else:
-            params = []
+            params.extend(["-s", pieces[1]])
 
         new_env = os.environ.copy()
         new_env['PYTHONPATH'] = '.'

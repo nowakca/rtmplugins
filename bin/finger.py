@@ -15,12 +15,19 @@ parser = ArgumentParser()
 parser.add_argument(
     '-s',
     '--shortid',
-    help='shortid of user to lookup.',
+    help='shortid of user to lookup',
     metavar='shortid'
+)
+parser.add_argument(
+    '-c',
+    '--channelid',
+    help='id of channel to respond to',
+    metavar='channelid'
 )
 args = parser.parse_args()
 
 
+################################################################################
 #
 def fetch_info(shortid):
     '''
@@ -42,4 +49,6 @@ def fetch_info(shortid):
 
 ################################################################################
 shortid = args.shortid
-post_response('DHWMC8L3D', repr(fetch_info(shortid)))
+channelid = args.channelid
+print("posting to channel {}".format(channelid))
+post_response(channelid, repr(fetch_info(shortid)))

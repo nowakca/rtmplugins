@@ -3,13 +3,31 @@
 # Run this from the rtmplugins directory if needed
 # PYTHONPATH=. ./bin/help_all.py
 
+from argparse import ArgumentParser
 from bin_utils import get_master_config, post_response
-from creds.lpass import get_lpcred
-from slackclient import SlackClient
 
 
+################################################################################
+# Prepare our command line option reader
+parser = ArgumentParser()
+parser.add_argument(
+    '-s',
+    '--shortid',
+    help='shortid of user to lookup',
+    metavar='shortid'
+)
+parser.add_argument(
+    '-c',
+    '--channelid',
+    help='id of channel to respond to',
+    metavar='channelid'
+)
+args = parser.parse_args()
+
+
+################################################################################
 #
-post_response('DHWMC8L3D', '''
+post_response(args.channelid, '''
 :information_source:
 Available commands:
 
