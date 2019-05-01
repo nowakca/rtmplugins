@@ -21,8 +21,8 @@ def post_response(channel, message_content, config=None):
         config = get_master_config()
 
     # Read our config file so we can get the past to our lastpass info
-    lk = config['LASTPASS_KEY_WEB']
-    slack_token = get_lpcred(lk, 'xoxp')
+    lk = config['LASTPASS_KEY_BOT']
+    slack_token = get_lpcred(lk, 'xoxb')
 
     # Use the stored slack token to make a web api connection for our responses
     sc = SlackClient(slack_token)
