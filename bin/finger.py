@@ -50,5 +50,4 @@ def fetch_info(shortid):
 ################################################################################
 shortid = args.shortid
 channelid = args.channelid
-print("posting to channel {}".format(channelid))
 post_response(channelid, repr(fetch_info(shortid)))
