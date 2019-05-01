@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 import sys
 import os
 import yaml
+import logging
 
 from rtmbot import RtmBot
 from creds.lpass import get_lpcred
@@ -11,6 +12,17 @@ from creds.lpass import get_lpcred
 This is modelled on https://github.com/slackapi/python-rtmbot/blob/master/rtmbot/bin/run_rtmbot.py
 It just adds in some bits to pull credentials from something other than a local text file
 '''
+
+
+class RtmBot2(RtmBot):
+    """
+    Overrides the connect method for rtmbot, as it didn't pass in team_state
+    And without the team_state being set to False, it times out on us
+    """
+
+    def connect(self):
+        """Convenience method that creates Server instance"""
+        self.slack_client.rtm_connect(with_team_state=False)
 
 
 def parse_args():
@@ -38,7 +50,7 @@ def main(args=None):
         config['SLACK_TOKEN'] = get_lpcred(lk, 'xoxb')
 
     # Create our bot and move on
-    bot = RtmBot(config)
+    bot = RtmBot2(config)
     try:
         bot.start()
     except KeyboardInterrupt:
